@@ -1,0 +1,15 @@
+{
+    "name": "Black Screen PWA",
+    "short_name": "Black PWA",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000000",
+    "description": "A simple black screen PWA.",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
