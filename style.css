@@ -1,0 +1,57 @@
+/* 确保 html 和 body 占满整个屏幕 */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #000000; /* 背景颜色为黑色 */
+    color: #ffffff; /* 字体颜色为白色 */
+    font-family: Arial, sans-serif; /* 字体 */
+    display: flex; /* 使用 flex 布局 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+}
+
+/* 确保容器占满整个页面 */
+#container {
+    display: flex;
+    flex-direction: column; /* 纵向排列 */
+    align-items: center; /* 组件水平居中 */
+    position: relative; /* 相对定位 */
+}
+
+/* 时间显示样式 */
+#timeDisplay {
+    font-size: 2em; /* 时间显示字体大小 */
+    margin-bottom: 20px; /* 下边距 */
+}
+
+/* alarmSet 样式 */
+#alarmSet {
+    margin-bottom: 20px; /* 下边距 */
+}
+
+/* 控制按钮样式 */
+button {
+    margin: 5px; /* 按钮之间的间距 */
+    padding: 10px 20px; /* 按钮内边距 */
+    font-size: 1em; /* 按钮字体大小 */
+    background-color: #333; /* 背景颜色 */
+    color: #fff; /* 字体颜色 */
+    border: none; /* 无边框 */
+    border-radius: 5px; /* 圆角 */
+    cursor: pointer; /* 鼠标光标为指针 */
+}
+
+/* 按钮悬停效果 */
+button:hover {
+    background-color: #555; /* 悬停时背景变亮 */
+}
+
+/* 隐藏光标样式 */
+.cursor-hidden {
+    cursor: none; /* 隐藏光标 */
+}
+
+.hidden {
+    display: none; /* 隐藏元素 */
+}
