@@ -3,7 +3,7 @@ const assets = [
     '/',
     '/index.html',
     '/manifest.json',
-    '/icon.png' // 确保你在此目录中有一个图标文件
+    '/icon.svg'
 ];
 
 // 安装 Service Worker
