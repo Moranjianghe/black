@@ -15,23 +15,112 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column; /* 使用列方向 */
             font-size: 3em;
+            overflow: hidden;
+            cursor: none; /* 默认隐藏光标 */
+        }
+        #time {
+            display: none; /* 默认不显示时间 */
+            position: absolute;
+            top: 20%; /* 时间位置在顶部20% */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2em; /* 更小的字体 */
+        }
+        #buttonContainer {
+            position: absolute;
+            bottom: 20px; /* 按钮位置在底部 */
+            display: flex;
+            gap: 20px; /* 按钮之间的间距 */
+        }
+        button {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div>黑色屏幕</div>
+    <div id="time"></div>
+    <div id="buttonContainer">
+        <button id="toggleButton">显示时间</button>
+        <button id="fullscreenButton">全屏</button>
+    </div>
     <script>
-        // 注册 Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js').then(registration => {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }, err => {
-                    console.error('Service Worker registration failed:', err);
-                });
+        let timeout; // 定义变量以用于隐藏按钮的计时器
+
+        // 防止屏幕关闭
+        function preventSleep() {
+            const handler = () => {};
+            document.addEventListener("visibilitychange", function () {
+                if (document.visibilityState === 'visible') {
+                    window.requestAnimationFrame(handler);
+                }
             });
         }
+
+        // 显示当前时间
+        function showTime() {
+            const timeElement = document.getElementById("time");
+            timeElement.style.display = 'flex';
+            setInterval(() => {
+                const now = new Date();
+                timeElement.textContent = now.toLocaleTimeString();
+            }, 1000);
+        }
+
+        // 切换时间显示状态
+        document.getElementById("toggleButton").addEventListener("click", () => {
+            const timeElement = document.getElementById("time");
+            if (timeElement.style.display === 'none') {
+                showTime();
+                timeElement.style.display = 'flex';
+                document.getElementById("toggleButton").textContent = '隐藏时间';
+            } else {
+                timeElement.style.display = 'none';
+                document.getElementById("toggleButton").textContent = '显示时间';
+            }
+            // 重新设置超时
+            resetTimeout();
+        });
+
+        // 全屏功能
+        document.getElementById("fullscreenButton").addEventListener("click", () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                document.getElementById("fullscreenButton").textContent = '退出全屏';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById("fullscreenButton").textContent = '全屏';
+                }
+            }
+        });
+
+        // 鼠标移动时显示按钮和光标
+        document.addEventListener("mousemove", () => {
+            document.getElementById("toggleButton").style.display = 'block';
+            document.getElementById("fullscreenButton").style.display = 'block';
+            document.body.style.cursor = 'default'; // 鼠标移动时显示光标
+            resetTimeout(); // 鼠标移动时重置隐藏按钮的计时器
+        });
+
+        // 重置信息
+        function resetTimeout() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById("toggleButton").style.display = 'none'; // 隐藏按钮
+                document.getElementById("fullscreenButton").style.display = 'none'; // 隐藏全屏按钮
+                document.body.style.cursor = 'none'; // 隐藏光标
+            }, 3000); // 3秒无操作后隐藏
+        }
+
+        // 确保屏幕不关闭
+        preventSleep();
     </script>
 </body>
 </html>
