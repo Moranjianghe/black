@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black Screen PWA</title>
+    <title>黑屏 PWA</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.svg">
     <style>
@@ -23,7 +23,7 @@
         #time {
             display: none; /* 默认不显示时间 */
             position: absolute;
-            top: 20%; /* 时间位置在顶部20% */
+            top: 20%; /* 时间在顶部的20%位置 */
             left: 50%;
             transform: translateX(-50%);
             font-size: 2em; /* 更小的字体 */
@@ -42,16 +42,41 @@
             font-size: 1em;
             cursor: pointer;
         }
+        #alarmContainer {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            display: none; /* 默认隐藏闹钟容器 */
+        }
+        #alarmTime {
+            font-size: 1.5em;
+        }
+        #setAlarmButton {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="time"></div>
+    <div id="alarmContainer">
+        <label for="alarmTime">设置闹钟时间 (HH:MM):</label>
+        <input type="time" id="alarmTime" />
+        <button id="setAlarmButton">设置闹钟</button>
+    </div>
     <div id="buttonContainer">
         <button id="toggleButton">显示时间</button>
         <button id="fullscreenButton">全屏</button>
     </div>
+    <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio> <!-- 确保有名为alarm.mp3的声音文件 -->
+
     <script>
         let timeout; // 定义变量以用于隐藏按钮的计时器
+        let alarmTimeout; // 定义闹钟的定时器
+        let alarmSound = document.getElementById("alarmSound"); // 获取闹钟声音元素
 
         // 防止屏幕关闭
         function preventSleep() {
@@ -80,9 +105,11 @@
                 showTime();
                 timeElement.style.display = 'flex';
                 document.getElementById("toggleButton").textContent = '隐藏时间';
+                document.getElementById("alarmContainer").style.display = 'flex'; // 显示闹钟容器
             } else {
                 timeElement.style.display = 'none';
                 document.getElementById("toggleButton").textContent = '显示时间';
+                document.getElementById("alarmContainer").style.display = 'none'; // 隐藏闹钟容器
             }
             // 重新设置超时
             resetTimeout();
@@ -101,10 +128,42 @@
             }
         });
 
-        // 鼠标移动时显示按钮和光标
+        // 设置闹钟
+        document.getElementById("setAlarmButton").addEventListener("click", () => {
+            const alarmInput = document.getElementById("alarmTime");
+            const alarmTime = alarmInput.value;
+
+            if (alarmTime) {
+                const alarmDate = new Date();
+                const [hours, minutes] = alarmTime.split(":");
+                alarmDate.setHours(hours);
+                alarmDate.setMinutes(minutes);
+                alarmDate.setSeconds(0);
+                
+                const now = new Date();
+                const timeoutDuration = alarmDate.getTime() - now.getTime();
+
+                if (timeoutDuration >= 0) {
+                    // 清除之前的闹钟
+                    clearTimeout(alarmTimeout);
+                    alarmTimeout = setTimeout(() => {
+                        alarmSound.play();
+                        alert("时间到！"); // 提示用户时间到
+                    }, timeoutDuration);
+                    alert(`闹钟已设置为 ${alarmTime}`); // 设置成功提示
+                } else {
+                    alert("选择的时间已经过去，请选择未来的时间。");
+                }
+            } else {
+                alert("请设置一个闹钟时间。");
+            }
+        });
+
+        // 鼠标移动时显示所有按钮和光标
         document.addEventListener("mousemove", () => {
             document.getElementById("toggleButton").style.display = 'block';
             document.getElementById("fullscreenButton").style.display = 'block';
+            document.getElementById("alarmContainer").style.display = 'flex'; // 显示闹钟容器
             document.body.style.cursor = 'default'; // 鼠标移动时显示光标
             resetTimeout(); // 鼠标移动时重置隐藏按钮的计时器
         });
@@ -115,6 +174,7 @@
             timeout = setTimeout(() => {
                 document.getElementById("toggleButton").style.display = 'none'; // 隐藏按钮
                 document.getElementById("fullscreenButton").style.display = 'none'; // 隐藏全屏按钮
+                document.getElementById("alarmContainer").style.display = 'none'; // 隐藏闹钟容器
                 document.body.style.cursor = 'none'; // 隐藏光标
             }, 3000); // 3秒无操作后隐藏
         }
